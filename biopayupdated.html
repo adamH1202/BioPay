@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioPay Family Account Demo</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #eef2f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .navbar {
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-left {
+            display: flex;
+            align-items: center;
+        }
+        .navbar img {
+            height: 40px;
+            margin-right: 20px;
+        }
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .navbar ul li {
+            margin-right: 20px;
+        }
+        .navbar ul li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 1em;
+        }
+        .navbar ul li a:hover {
+            color: #3498db;
+        }
+        .navbar ul li.active a {
+            text-decoration: underline;
+            color: #3498db;
+        }
+        .signin {
+            display: flex;
+            align-items: center;
+        }
+        .signin p {
+            margin-right: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+        }
+        .signin img {
+            height: 30px;
+            width: 30px;
+            border-radius: 50%;
+        }
+        .content {
+            padding: 20px;
+        }
+        .family-account {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .account-management-title {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .family-member {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .family-member h3 {
+            margin: 0;
+            font-size: 1.3em;
+            cursor: pointer;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            position: relative;
+        }
+        .family-member h3::after {
+            content: '▼';
+            font-size: 0.8em;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.3s;
+        }
+        .family-member.open h3::after {
+            transform: translateY(-50%) rotate(180deg);
+        }
+        /* Smooth Animation */
+        .dropdown {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .dropdown.show {
+            max-height: 1000px;  /* High max-height to fit content */
+        }
+        .restrictions-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .restrictions {
+            padding: 10px;
+            background-color: #f4f6f7;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 10px;
+            flex: 1;
+        }
+        .fingerprint {
+            text-align: center;
+            margin-left: 20px;
+            flex-shrink: 0;
+        }
+        .fingerprint img {
+            width: 50px;
+            height: auto;
+        }
+        .fingerprint-label {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .input-section {
+            margin-top: 10px;
+        }
+        .input-section input {
+            padding: 5px;
+            margin: 5px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+    <div class="navbar-left">
+        <img src="biopay_logo.png" alt="BioPay Logo">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Products</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">About Us</a></li>
+            <li class="active"><a href="#">Account Management</a></li>
+        </ul>
+    </div>
+    <div class="signin">
+        <p>Welcome, John</p>
+        <img src="blankpfp.png" alt="Profile Picture">
+    </div>
+</div>
+
+<!-- Content -->
+<div class="content">
+    <div class="family-account">
+        <!-- Moved Account Management Heading -->
+        <div class="account-management-title">
+            Account Management
+        </div>
+
+        <h2>The Johnson Family Account</h2>
+
+        <!-- Father (Admin) -->
+        <div class="family-member" id="member1">
+            <h3 onclick="toggleDropdown('dropdown1', 'member1')">John Johnson (Father) - Admin</h3>
+            <div id="dropdown1" class="dropdown">
+                <div class="restrictions-wrapper">
+                    <div class="restrictions">
+                        <p><strong>Role:</strong> Admin</p>
+                        <p><strong>Spending Limit:</strong> <span id="budgetDisplay1">Unlimited</span></p>
+                        <p><strong>Restrictions:</strong> <span id="restrictedItemsDisplay1">None</span></p>
+                        <div class="input-section">
+                            <input type="text" id="budgetInput1" placeholder="Update budget ($)" value="Unlimited">
+                            <button onclick="updateBudget(1)">Update Spending Limit</button>
+                        </div>
+                        <div class="input-section">
+                            <input type="text" id="restrictedItemsInput1" placeholder="Update restricted items" value="None">
+                            <button onclick="updateRestrictions(1)">Update Restrictions</button>
+                        </div>
+                    </div>
+                    <div class="fingerprint">
+                        <p class="fingerprint-label">John's Fingerprint</p>
+                        <img src="johnfingerprint.png" alt="John's Fingerprint">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mother -->
+        <div class="family-member" id="member2">
+            <h3 onclick="toggleDropdown('dropdown2', 'member2')">Jane Johnson (Wife)</h3>
+            <div id="dropdown2" class="dropdown">
+                <div class="restrictions-wrapper">
+                    <div class="restrictions">
+                        <p><strong>Role:</strong> Member</p>
+                        <p><strong>Spending Limit:</strong> <span id="budgetDisplay2">Unlimited</span></p>
+                        <p><strong>Restrictions:</strong> <span id="restrictedItemsDisplay2">None</span></p>
+                        <div class="input-section">
+                            <input type="text" id="budgetInput2" placeholder="Update budget ($)" value="Unlimited">
+                            <button onclick="updateBudget(2)">Update Spending Limit</button>
+                        </div>
+                        <div class="input-section">
+                            <input type="text" id="restrictedItemsInput2" placeholder="Update restricted items" value="None">
+                            <button onclick="updateRestrictions(2)">Update Restrictions</button>
+                        </div>
+                    </div>
+                    <div class="fingerprint">
+                        <p class="fingerprint-label">Jane's Fingerprint</p>
+                        <img src="johnfingerprint.png" alt="Jane's Fingerprint">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tom -->
+        <div class="family-member" id="member3">
+            <h3 onclick="toggleDropdown('dropdown3', 'member3')">Tom Johnson (Child - 16 years old)</h3>
+            <div id="dropdown3" class="dropdown">
+                <div class="restrictions-wrapper">
+                    <div class="restrictions">
+                        <p><strong>Role:</strong> Member</p>
+                        <p><strong>Spending Limit:</strong> <span id="budgetDisplay3">$30/day</span></p>
+                        <p><strong>Restrictions:</strong> <span id="restrictedItemsDisplay3">Candy</span></p>
+                        <div class="input-section">
+                            <input type="number" id="budgetInput3" placeholder="Update budget ($)" value="30">
+                            <button onclick="updateBudget(3)">Update Spending Limit</button>
+                        </div>
+                        <div class="input-section">
+                            <input type="text" id="restrictedItemsInput3" placeholder="Update restricted items" value="Candy">
+                            <button onclick="updateRestrictions(3)">Update Restrictions</button>
+                        </div>
+                    </div>
+                    <div class="fingerprint">
+                        <p class="fingerprint-label">Tom's Fingerprint</p>
+                        <img src="johnfingerprint.png" alt="Tom's Fingerprint">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lisa -->
+        <div class="family-member" id="member4">
+            <h3 onclick="toggleDropdown('dropdown4', 'member4')">Lisa Johnson (Child - 12 years old)</h3>
+            <div id="dropdown4" class="dropdown">
+                <div class="restrictions-wrapper">
+                    <div class="restrictions">
+                        <p><strong>Role:</strong> Member</p>
+                        <p><strong>Spending Limit:</strong> <span id="budgetDisplay4">$20/day</span></p>
+                        <p><strong>Restrictions:</strong> <span id="restrictedItemsDisplay4">Candy, Soda</span></p>
+                        <div class="input-section">
+                            <input type="number" id="budgetInput4" placeholder="Update budget ($)" value="20">
+                            <button onclick="updateBudget(4)">Update Spending Limit</button>
+                        </div>
+                        <div class="input-section">
+                            <input type="text" id="restrictedItemsInput4" placeholder="Update restricted items" value="Candy, Soda">
+                            <button onclick="updateRestrictions(4)">Update Restrictions</button>
+                        </div>
+                    </div>
+                    <div class="fingerprint">
+                        <p class="fingerprint-label">Lisa's Fingerprint</p>
+                        <img src="johnfingerprint.png" alt="Lisa's Fingerprint">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mark -->
+        <div class="family-member" id="member5">
+            <h3 onclick="toggleDropdown('dropdown5', 'member5')">Mark Johnson (Child - 8 years old)</h3>
+            <div id="dropdown5" class="dropdown">
+                <div class="restrictions-wrapper">
+                    <div class="restrictions">
+                        <p><strong>Role:</strong> Member</p>
+                        <p><strong>Spending Limit:</strong> <span id="budgetDisplay5">$15/day</span></p>
+                        <p><strong>Restrictions:</strong> <span id="restrictedItemsDisplay5">Candy, Soda, Chips</span></p>
+                        <div class="input-section">
+                            <input type="number" id="budgetInput5" placeholder="Update budget ($)" value="15">
+                            <button onclick="updateBudget(5)">Update Spending Limit</button>
+                        </div>
+                        <div class="input-section">
+                            <input type="text" id="restrictedItemsInput5" placeholder="Update restricted items" value="Candy, Soda, Chips">
+                            <button onclick="updateRestrictions(5)">Update Restrictions</button>
+                        </div>
+                    </div>
+                    <div class="fingerprint">
+                        <p class="fingerprint-label">Mark's Fingerprint</p>
+                        <img src="johnfingerprint.png" alt="Mark's Fingerprint">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function toggleDropdown(dropdownId, memberId) {
+        const dropdown = document.getElementById(dropdownId);
+        const member = document.getElementById(memberId);
+
+        dropdown.classList.toggle('show');
+        member.classList.toggle('open');
+    }
+
+    function updateBudget(memberId) {
+        const newBudget = document.getElementById(`budgetInput${memberId}`).value;
+        document.getElementById(`budgetDisplay${memberId}`).innerHTML = `$${newBudget}/day`;
+    }
+
+    function updateRestrictions(memberId) {
+        const newRestrictions = document.getElementById(`restrictedItemsInput${memberId}`).value;
+        document.getElementById(`restrictedItemsDisplay${memberId}`).innerHTML = newRestrictions;
+    }
+</script>
+
+</body>
+</html>
+
+
